@@ -1,0 +1,22 @@
+config { type: "table",
+ schema: "baseball_DW",
+  name: "dim_team"
+   }
+
+
+ 
+SELECT
+  teamId,
+  teamName
+FROM (
+  SELECT
+    teamId,
+    teamName,
+    ROW_NUMBER() OVER(PARTITION BY teamId ORDER BY updatedAt DESC) as rn
+  FROM (
+    SELECT homeTeamId AS teamId, homeTeamName AS teamName, updatedAt FROM ${ref("stg_games_all")}
+    UNION ALL
+    SELECT awayTeamId AS teamId, awayTeamName AS teamName, updatedAt FROM ${ref("stg_games_all")}
+  )
+)
+WHERE rn = 1

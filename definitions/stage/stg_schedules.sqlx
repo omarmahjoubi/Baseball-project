@@ -1,0 +1,24 @@
+config {
+  type: "incremental",
+  schema: "baseball_STG",
+  name: "stg_schedules",
+  description: "Direct incremental copy of the schedules raw data.",
+  
+  
+  uniqueKey: ["gameId"], 
+  
+  bigquery: {
+    partitionBy: "DATE(created)", 
+    clusterBy: ["gameId"]           
+  }
+}
+
+SELECT
+  *
+FROM `bigquery-public-data.baseball.schedules` -- Reference to your declared source table
+
+${when(incremental(), `
+  WHERE 
+    -- Only fetch records created after the latest record currently in this table
+    created > (SELECT COALESCE(MAX(created), TIMESTAMP("1800-01-01")) FROM ${self()})
+`)}

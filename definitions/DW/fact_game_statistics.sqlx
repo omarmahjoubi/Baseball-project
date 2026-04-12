@@ -1,0 +1,58 @@
+config {
+  type: "incremental",
+  schema: "baseball_DW",
+  name: "fact_game_statistics",
+  description: "Fact table containing game-level statistics and scores.",
+  
+  uniqueKey: ["gameId"], 
+  
+  bigquery: {
+    partitionBy: "DATE(game_start_timestamp)",
+    clusterBy: ["seasonId", "venueId"]
+  }
+}
+
+
+  SELECT
+    gameId,
+    -- Foreign Keys
+    seasonId,
+    venueId,
+    homeTeamId,
+    awayTeamId,
+    -- We use the Date ID (YYYY-MM-DD) as the foreign key to dim_date
+    DATE(startTime) AS date_id,
+    startTime AS game_start_timestamp,
+    
+    -- Measures (Using MAX because these values are repeated across all pitch rows for a game)
+    MAX(gameStatus) AS gameStatus,
+    MAX(attendance) AS attendance,
+    MAX(dayNight) AS dayNight,
+    MAX(durationMinutes) AS durationMinutes,
+    MAX(homeFinalRuns) AS homeFinalRuns,
+    MAX(homeFinalHits) AS homeFinalHits,
+    MAX(homeFinalErrors) AS homeFinalErrors,
+    MAX(awayFinalRuns) AS awayFinalRuns,
+    MAX(awayFinalHits) AS awayFinalHits,
+    MAX(awayFinalErrors) AS awayFinalErrors,
+    CASE 
+      WHEN MAX(homeFinalRuns) > MAX(awayFinalRuns) THEN homeTeamId
+      WHEN MAX(awayFinalRuns) > MAX(homeFinalRuns) THEN awayTeamId
+      ELSE 'TIE' -- In case of unusual scenarios or suspended games
+    END AS winningTeamId,
+    -- High Watermark for Incremental Load
+    MAX(updatedAt) AS updatedAt,
+    MAX(createdAt) AS createdAt
+    
+  FROM ${ref("stg_games_all")}
+  
+  ${when(incremental(), `
+    WHERE 
+      updatedAt > (SELECT COALESCE(MAX(updatedAt), TIMESTAMP("1800-01-01")) FROM ${self()})
+  `)}
+  
+  GROUP BY 
+    gameId, seasonId, venueId, homeTeamId, awayTeamId, date_id, startTime
+
+
+

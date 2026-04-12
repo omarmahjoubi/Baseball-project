@@ -1,0 +1,17 @@
+config {
+  type: "table",
+  schema: "baseball_DW",
+  name: "dim_season",
+  description: "Unique list of MLB seasons, including regular and post-season types."
+}
+
+
+SELECT Distinct
+  seasonId,
+  seasonType,
+  Year
+FROM
+  ${ref("stg_games_all")}
+ORDER BY 
+  Year DESC, 
+  seasonType ASC

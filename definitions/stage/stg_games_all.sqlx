@@ -1,0 +1,32 @@
+config {
+  type: "incremental",     
+  schema: "baseball_STG",       
+  name: "stg_games_all",
+
+  uniqueKey: ["gameId", "createdAt","updatedAt"], 
+  bigquery: {
+    partitionBy: "DATE(startTime)",
+    clusterBy: ["gameId"]
+  }
+  
+}
+
+SELECT
+  *
+FROM `bigquery-public-data.baseball.games_wide`
+
+union distinct
+SELECT
+  *
+FROM `bigquery-public-data.baseball.games_post_wide`
+
+
+ -- Points to your source table
+-- This 'when' block only executes during incremental runs
+${when(incremental(),
+`WHERE 
+    updatedAt > (SELECT COALESCE(MAX(updatedAt), TIMESTAMP("1800-01-01")) FROM ${self()})
+    and createdAt is not null
+    
+    
+`)}

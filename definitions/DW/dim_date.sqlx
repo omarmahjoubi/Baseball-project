@@ -1,0 +1,24 @@
+config {
+  type: "table",
+  schema: "baseball_DW",
+  name: "dim_date"
+}
+
+SELECT DISTINCT
+  -- The Full Date as a Date object for joining
+  DATE(startTime) AS startTime,
+  
+  -- Formatting startTimeFull as "DD-MM-YYYY HH:MM"
+  FORMAT_TIMESTAMP("%d-%m-%Y %H:%M", startTime) AS startTimeFull,
+  
+  -- Numeric components for filtering
+  EXTRACT(DAY FROM startTime) AS startTimeDay,
+  EXTRACT(MONTH FROM startTime) AS startTimeMonth,
+  EXTRACT(YEAR FROM startTime) AS startTimeYear,
+  EXTRACT(HOUR FROM startTime) AS startTimeHour,
+  EXTRACT(MINUTE FROM startTime) AS startTimeMinute,
+  
+  
+FROM ${ref("stg_schedules")}
+WHERE startTime IS NOT NULL
+ORDER BY startTime DESC

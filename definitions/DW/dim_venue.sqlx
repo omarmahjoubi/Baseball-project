@@ -1,0 +1,41 @@
+config {
+  type: "table", 
+  schema: "baseball_DW",
+  name: "dim_venue",
+  description: "Dimension table containing unique MLB venue details.",
+  
+}
+
+WITH venue_metadata AS (
+  SELECT
+    venueId,
+    venueName,
+    venueSurface,
+    venueCapacity,
+    VenueCity,
+    VenueState,
+    VenueZip,
+    VenueMarket,
+    venueOutfieldDistances,
+    -- We use updatedAt to identify the most recent record for this venue
+    updatedAt,
+    ROW_NUMBER() OVER(PARTITION BY venueId ORDER BY updatedAt DESC) as rn
+  FROM ${ref("stg_games_all")}
+  -- Ensure we only consider rows where venueId is not null
+  WHERE venueId IS NOT NULL
+)
+
+SELECT
+  venueId,
+  venueName,
+  venueSurface,
+  venueCapacity,
+  VenueCity,
+  VenueState,
+  VenueZip,
+  VenueMarket,
+  venueOutfieldDistances
+FROM
+  venue_metadata
+WHERE
+  rn = 1
