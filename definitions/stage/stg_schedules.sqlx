@@ -1,6 +1,6 @@
 config {
   type: "incremental",
-  schema: "baseball_STG",
+  schema: dataform.projectConfig.vars.staging,
   name: "stg_schedules",
   description: "Direct incremental copy of the schedules raw data.",
   
@@ -15,7 +15,7 @@ config {
 
 SELECT
   *
-FROM `bigquery-public-data.baseball.schedules` -- Reference to your declared source table
+FROM ${ref("schedules")} -- Reference to your declared source table
 
 ${when(incremental(), `
   WHERE 

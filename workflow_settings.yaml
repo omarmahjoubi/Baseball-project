@@ -1,4 +1,14 @@
 defaultProject: project-f5aa7f27-0184-4aa1-9b9
-defaultDataset: dataform
+defaultDataset: "Baseball-DW"
 defaultAssertionDataset: dataform_assertions
 dataformCoreVersion: 3.0.42
+vars:
+    # define datasets
+    staging : "baseball_STG"
+    DW : "baseball_DW"
+    source_project_id : "bigquery-public-data"
+    source_dataset_id : "baseball"
+    
+    
+
+
