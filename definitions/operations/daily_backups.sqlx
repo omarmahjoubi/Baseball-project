@@ -1,0 +1,35 @@
+config {
+  type: "operations",
+  hasOutput: false,
+  dependencies: ["dim_team", "dim_venue", "dim_season", "dim_date", "fact_game_statistics"] 
+}
+
+-- 1. Backup the dim team
+DROP SNAPSHOT TABLE IF EXISTS `${dataform.projectConfig.vars.DW}.dim_team_backup`;
+CREATE SNAPSHOT TABLE `${dataform.projectConfig.vars.DW}.dim_team_backup`
+CLONE `${dataform.projectConfig.vars.DW}.dim_team`
+FOR SYSTEM_TIME AS OF CURRENT_TIMESTAMP();
+
+-- 1. Backup the dim venue
+DROP SNAPSHOT TABLE IF EXISTS `${dataform.projectConfig.vars.DW}.dim_venue_backup`;
+CREATE SNAPSHOT TABLE `${dataform.projectConfig.vars.DW}.dim_venue_backup`
+CLONE `${dataform.projectConfig.vars.DW}.dim_venue`
+FOR SYSTEM_TIME AS OF CURRENT_TIMESTAMP();
+
+-- 1. Backup the dim season
+DROP SNAPSHOT TABLE IF EXISTS `${dataform.projectConfig.vars.DW}.dim_season_backup`;
+CREATE SNAPSHOT TABLE `${dataform.projectConfig.vars.DW}.dim_season_backup`
+CLONE `${dataform.projectConfig.vars.DW}.dim_season`
+FOR SYSTEM_TIME AS OF CURRENT_TIMESTAMP();
+
+-- 1. Backup the dim season
+DROP SNAPSHOT TABLE IF EXISTS `${dataform.projectConfig.vars.DW}.dim_date_backup`;
+CREATE SNAPSHOT TABLE `${dataform.projectConfig.vars.DW}.dim_date_backup`
+CLONE `${dataform.projectConfig.vars.DW}.dim_date`
+FOR SYSTEM_TIME AS OF CURRENT_TIMESTAMP();
+
+-- 3. Backup the fact table game statistics
+DROP SNAPSHOT TABLE IF EXISTS `${dataform.projectConfig.vars.DW}.fact_game_statistics_backup`;
+CREATE SNAPSHOT TABLE `${dataform.projectConfig.vars.DW}.fact_game_statistics_backup`
+CLONE `${dataform.projectConfig.vars.DW}.fact_game_statistics`
+FOR SYSTEM_TIME AS OF CURRENT_TIMESTAMP();
