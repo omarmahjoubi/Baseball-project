@@ -1,6 +1,6 @@
 config {
   type: "table",
-  schema: "baseball_DW",
+  schema: dataform.projectConfig.vars.DW,
   name: "dim_season",
   description: "Unique list of MLB seasons, including regular and post-season types."
 }
