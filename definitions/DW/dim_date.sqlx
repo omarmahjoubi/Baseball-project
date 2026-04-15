@@ -1,7 +1,8 @@
 config {
   type: "table",
   schema: dataform.projectConfig.vars.DW,
-  name: "dim_date"
+  name: "dim_date",
+  description: "Unique list of MLB game schedules"
 }
 
 SELECT DISTINCT

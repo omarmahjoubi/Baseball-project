@@ -9,7 +9,7 @@ config {
   
   bigquery: {
     partitionBy: "DATE(created)", 
-    clusterBy: ["gameId"]           
+    clusterBy: ["gameId","homeTeamId", "awayTeamId"]           
   }
 }
 
@@ -21,4 +21,5 @@ ${when(incremental(), `
   WHERE 
     -- Only fetch records created after the latest record currently in this table
     created > (SELECT COALESCE(MAX(created), TIMESTAMP("1800-01-01")) FROM ${self()})
+    and created is not null
 `)}
