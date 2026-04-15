@@ -1,6 +1,7 @@
 config { type: "table",
  schema: dataform.projectConfig.vars.DW,
-  name: "dim_team"
+  name: "dim_team",
+  description: "Unique list of MLB teams"
    }
 
 
