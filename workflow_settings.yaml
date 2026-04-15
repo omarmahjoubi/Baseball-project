@@ -6,6 +6,7 @@ vars:
     # define datasets
     staging : "baseball_STG"
     DW : "baseball_DW"
+    backup_DW : "baseball_DW_bkp"
     source_project_id : "bigquery-public-data"
     source_dataset_id : "baseball"
     
