@@ -4,6 +4,12 @@ config {
   name: "fact_game_statistics",
   description: "Fact table containing game-level statistics and scores.",
   
+  dependencies: [
+    "assert_home_team_consistency", 
+    "assert_away_team_consistency"
+  ],
+
+
   uniqueKey: ["gameId"], 
   
   bigquery: {

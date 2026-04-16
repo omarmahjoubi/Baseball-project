@@ -1,0 +1,2 @@
+config { type: "assertion" }
+${utils.assert_game_field_consistency(ref("stg_games_all"), "gameId", "awayTeamId", "awayTeamName")}

@@ -22,4 +22,5 @@ ${when(incremental(), `
     -- Only fetch records created after the latest record currently in this table
     created > (SELECT COALESCE(MAX(created), TIMESTAMP("1800-01-01")) FROM ${self()})
     and created is not null
+    and gameId is not null
 `)}

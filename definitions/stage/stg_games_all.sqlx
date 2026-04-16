@@ -27,6 +27,7 @@ ${when(incremental(),
 `WHERE 
     updatedAt > (SELECT COALESCE(MAX(updatedAt), TIMESTAMP("1800-01-01")) FROM ${self()})
     and createdAt is not null
+    and gameId is not null
     
     
 `)}
